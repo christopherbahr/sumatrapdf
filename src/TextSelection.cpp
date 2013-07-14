@@ -244,12 +244,34 @@ void TextSelection::SelectWordAt(int pageNo, double x, double y)
 
     for (; ix > 0; ix--)
         if (!iswordchar(text[ix - 1]))
-            break;
+		{
+			//when looking backwards make sure that the word doesn't wrap around to the previous line
+			if((ix > 2 && text[ix - 1] == '\n' && text[ix - 2] == '-'))
+			{
+				//decrement the counter so that we look past the '-' character
+				--ix;
+			}
+			else
+			{
+				break;
+			}
+		}
     StartAt(pageNo, ix);
 
     for (; ix < textLen; ix++)
         if (!iswordchar(text[ix]))
-            break;
+		{
+			//if the next two characters are -\n the word is wrapping and we want to select the whole thing
+			if((ix + 1 < textLen && text[ix] == '-' && text[ix + 1] == '\n'))
+			{
+				//increment the index so that we look past the newline character
+				++ix;
+			}
+			else
+			{
+				break;
+			}
+		}
     SelectUpTo(pageNo, ix);
 }
 
