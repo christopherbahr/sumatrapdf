@@ -241,37 +241,29 @@ void TextSelection::SelectWordAt(int pageNo, double x, double y)
     int ix = FindClosestGlyph(pageNo, x, y);
     int textLen;
     const WCHAR *text = textCache->GetData(pageNo, &textLen);
+	
+	//hold original value of ix for when we look forward
+	int tmpix = ix;
 
     for (; ix > 0; ix--)
         if (!iswordchar(text[ix - 1]))
-		{
 			//when looking backwards make sure that the word doesn't wrap around to the previous line
-			if((ix > 2 && text[ix - 1] == '\n' && text[ix - 2] == '-'))
-			{
-				//decrement the counter so that we look past the '-' character
-				--ix;
-			}
+			if(ix > 2 && text[ix - 1] == '\n' && text[ix - 2] == '-')
+				--ix; //decrement the counter so that we look past the '-' character
 			else
-			{
 				break;
-			}
-		}
     StartAt(pageNo, ix);
+
+	//small optimization. No need to look from beginning of word
+	ix = tmpix;
 
     for (; ix < textLen; ix++)
         if (!iswordchar(text[ix]))
-		{
 			//if the next two characters are -\n the word is wrapping and we want to select the whole thing
-			if((ix + 1 < textLen && text[ix] == '-' && text[ix + 1] == '\n'))
-			{
-				//increment the index so that we look past the newline character
-				++ix;
-			}
+			if(ix + 1 < textLen && text[ix] == '-' && text[ix + 1] == '\n')
+				++ix; //increment the index so that we look past the newline character
 			else
-			{
 				break;
-			}
-		}
     SelectUpTo(pageNo, ix);
 }
 
