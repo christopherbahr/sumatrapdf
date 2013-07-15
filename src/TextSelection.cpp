@@ -242,7 +242,7 @@ void TextSelection::SelectWordAt(int pageNo, double x, double y)
     int textLen;
     const WCHAR *text = textCache->GetData(pageNo, &textLen);
 	
-	//hold original value of ix for when we look forward
+    //hold original value of ix for when we look forward
     int tmpix = ix;
 
     for (; ix > 0; ix--)
@@ -254,7 +254,7 @@ void TextSelection::SelectWordAt(int pageNo, double x, double y)
                 break;
     StartAt(pageNo, ix);
 
-	//small optimization. No need to look from beginning of word
+    //small optimization. No need to look from beginning of word
     ix = tmpix;
 
     for (; ix < textLen; ix++)
